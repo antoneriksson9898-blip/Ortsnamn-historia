@@ -1,1 +1,31 @@
-index.html
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ortnamnskollen</title>
+</head>
+<body>
+
+    <h1>Ortnamnskollen</h1>
+
+    <p>Ta reda på historien bakom svenska ortnamn.</p>
+
+    <input type="text" id="ortnamn" placeholder="Skriv ett ortnamn">
+
+    <button onclick="sok()">Sök</button>
+
+    <div id="resultat"></div>
+
+    <script>
+        function sok() {
+            let ort = document.getElementById("ortnamn").value;
+
+            document.getElementById("resultat").innerHTML =
+                "<h2>" + ort + "</h2>" +
+                "<p>Här kommer information om ortnamnet att visas.</p>";
+        }
+    </script>
+
+</body>
+</html>
