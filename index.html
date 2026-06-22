@@ -1,31 +1,86 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ortnamnskollen</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ortnamnskollen</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#f5f7fa;
+    max-width:800px;
+    margin:auto;
+    padding:20px;
+}
+
+h1{
+    text-align:center;
+    color:#2c3e50;
+}
+
+p{
+    text-align:center;
+}
+
+.search-box{
+    display:flex;
+    gap:10px;
+    margin-top:30px;
+}
+
+input{
+    flex:1;
+    padding:15px;
+    border-radius:10px;
+    border:1px solid #ccc;
+    font-size:16px;
+}
+
+button{
+    padding:15px 25px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:16px;
+}
+
+#resultat{
+    margin-top:30px;
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+</style>
 </head>
+
 <body>
 
-    <h1>Ortnamnskollen</h1>
+<h1>Ortnamnskollen</h1>
 
-    <p>Ta reda på historien bakom svenska ortnamn.</p>
+<p>Upptäck historien bakom Sveriges ortnamn</p>
 
+<div class="search-box">
     <input type="text" id="ortnamn" placeholder="Skriv ett ortnamn">
-
     <button onclick="sok()">Sök</button>
+</div>
 
-    <div id="resultat"></div>
+<div id="resultat"></div>
 
-    <script>
-        function sok() {
-            let ort = document.getElementById("ortnamn").value;
+<script>
+function sok(){
 
-            document.getElementById("resultat").innerHTML =
-                "<h2>" + ort + "</h2>" +
-                "<p>Här kommer information om ortnamnet att visas.</p>";
-        }
-    </script>
+let ort = document.getElementById("ortnamn").value;
+
+document.getElementById("resultat").innerHTML = `
+<h2>${ort}</h2>
+<p>AI-funktionen är inte inkopplad ännu.</p>
+<p>Snart kommer historien bakom ortnamnet att visas här.</p>
+`;
+
+}
+</script>
 
 </body>
 </html>
