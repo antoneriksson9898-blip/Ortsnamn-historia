@@ -62,7 +62,7 @@ button{
 <p>Upptäck historien bakom Sveriges ortnamn</p>
 
 <div class="search-box">
-    <input type="text" id="ortnamn" placeholder="Skriv ett ortnamn">
+    <input type="text" id="ortnamn" placeholder="Skriv ett ortnamn" onkeypress="if(event.key==='Enter') sok()">
     <button onclick="sok()">Sök</button>
 </div>
 
