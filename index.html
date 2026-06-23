@@ -71,8 +71,15 @@ document.getElementById("ortnamn").addEventListener("keydown", function(event) {
         sok();
     }
 });
+
 async function sok() {
-    const ort = document.getElementById("ortnamn").value;
+    const ort = document.getElementById("ortnamn").value.trim();
+
+    if (!ort) {
+        document.getElementById("resultat").innerHTML =
+            "<p>Skriv ett ortnamn först.</p>";
+        return;
+    }
 
     document.getElementById("resultat").innerHTML =
         "<p>Söker information...</p>";
@@ -92,21 +99,11 @@ async function sok() {
             <h2>${ort}</h2>
             <p>${data.svar}</p>
         `;
+
     } catch (error) {
         document.getElementById("resultat").innerHTML =
             "<p>Fel: " + error.message + "</p>";
     }
-}
-
-    });
-
-    const data = await response.json();
-
-    document.getElementById("resultat").innerHTML = `
-        <h2>${ort}</h2>
-        <p>${data.svar}</p>
-    `;
-}
 }
 </script>
 
