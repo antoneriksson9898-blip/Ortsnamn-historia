@@ -6,51 +6,47 @@
 <title>Ortnamnskollen</title>
 
 <style>
-body{
+body {
     font-family: Arial, sans-serif;
-    background:#f5f7fa;
-    max-width:800px;
-    margin:auto;
-    padding:20px;
+    background: #f5f7fa;
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
 }
 
-h1{
-    text-align:center;
-    color:#2c3e50;
+h1, p {
+    text-align: center;
 }
 
-p{
-    text-align:center;
+.search-box {
+    display: flex;
+    gap: 10px;
+    margin-top: 30px;
 }
 
-.search-box{
-    display:flex;
-    gap:10px;
-    margin-top:30px;
+input {
+    flex: 1;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 16px;
 }
 
-input{
-    flex:1;
-    padding:15px;
-    border-radius:10px;
-    border:1px solid #ccc;
-    font-size:16px;
+button {
+    padding: 15px 25px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    background: #2c3e50;
+    color: white;
 }
 
-button{
-    padding:15px 25px;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-    font-size:16px;
-}
-
-#resultat{
-    margin-top:30px;
-    background:white;
-    padding:20px;
-    border-radius:10px;
-    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+#resultat {
+    margin-top: 30px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
 }
 </style>
 </head>
@@ -58,63 +54,27 @@ button{
 <body>
 
 <h1>Ortnamnskollen</h1>
-
 <p>Upptäck historien bakom Sveriges ortnamn</p>
 
 <div class="search-box">
-    <input type="text" id="ortnamn" placeholder="Skriv ett ortnamn" onkeypress="if(event.key==='Enter') sok()">
-    <button onclick="sok()">Sök</button>
+    <input type="text" id="ortnamn" placeholder="Skriv ett ortnamn">
+    <button id="sokKnapp">Sök</button>
 </div>
 
 <div id="resultat"></div>
 
-    <script>
-    
-async function sok() {
+<script>
+document.getElementById("sokKnapp").addEventListener("click", sok);
 
-alert("Knappen fungerar");
-    
-    let ort = document.getElementById("ortnamn").value;
-
-    document.getElementById("resultat").innerHTML =
-        "<p>Söker information om ortnamnet...</p>";
-
-    try {
-
-        const response = await fetch(
-            "https://ortsnamn-ai.anton-eriksson9898.workers.dev/",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    ortnamn: ort
-                })
-            }
-        );
-
-        const data = await response.json();
-
-        document.getElementById("resultat").innerHTML = `
-            <h2>${ort}</h2>
-            <p>${data.svar}</p>
-        `;
-
-    } catch (error) {
-
-        document.getElementById("resultat").innerHTML = `
-            <p>Kunde inte hämta information.</p>
-        `;
-
-        console.error(error);
+document.getElementById("ortnamn").addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+        sok();
     }
-}
-}
+});
 
+async function sok() {
+    alert("Knappen fungerar");
 }
-
-
 </script>
 
 </body>
