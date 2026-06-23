@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="sv">
 <head>
@@ -10,26 +9,37 @@
 body {
     font-family: Arial, sans-serif;
     background: #f4f6f8;
-    max-width: 900px;
-    margin: auto;
+    margin: 0;
     padding: 20px;
-}
-
-h1 {
-    text-align: center;
     color: #1f2937;
 }
 
-.subtitle {
+.container {
+    max-width: 900px;
+    margin: auto;
+}
+
+.hero {
     text-align: center;
+    background: white;
+    padding: 35px 20px;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+h1 {
+    margin-bottom: 10px;
+}
+
+.subtitle {
     color: #666;
-    margin-bottom: 30px;
+    font-size: 17px;
 }
 
 .search-box {
     display: flex;
     gap: 10px;
-    margin-bottom: 20px;
+    margin-top: 25px;
 }
 
 input {
@@ -41,7 +51,7 @@ input {
 }
 
 button {
-    padding: 15px 25px;
+    padding: 15px 22px;
     border: none;
     border-radius: 10px;
     cursor: pointer;
@@ -55,50 +65,109 @@ button:hover {
 }
 
 #resultat {
+    margin-top: 25px;
+}
+
+.card, .info-box {
+    background: white;
+    padding: 22px;
+    border-radius: 14px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
     margin-top: 20px;
 }
 
-.card {
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-}
-
 .section {
-    margin-top: 15px;
+    margin-top: 16px;
 }
 
 .section h3 {
     margin-bottom: 5px;
-    color: #1f2937;
 }
 
-.loading {
+.loading, .error {
     text-align: center;
-    color: #666;
 }
 
 .error {
-    color: red;
+    color: #b91c1c;
+}
+
+.small-text {
+    color: #666;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.recent-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.recent-buttons button {
+    background: #e5e7eb;
+    color: #111827;
+    padding: 9px 12px;
+    font-size: 14px;
+}
+
+.share-btn {
+    background: #111827;
+    margin-top: 15px;
+}
+
+footer {
     text-align: center;
+    margin-top: 35px;
+    color: #666;
+    font-size: 13px;
+}
+
+@media (max-width: 600px) {
+    .search-box {
+        flex-direction: column;
+    }
+
+    button {
+        width: 100%;
+    }
 }
 </style>
 </head>
 
 <body>
 
-<h1>Ortnamnskollen</h1>
-<p class="subtitle">Upptäck historien bakom Sveriges ortnamn</p>
+<div class="container">
 
-<div class="search-box">
-    <input type="text" id="ortnamn" placeholder="Skriv ett ortnamn">
-    <button id="sokKnapp">Sök</button>
+    <div class="hero">
+        <h1>Ortnamnskollen</h1>
+        <p class="subtitle">Varje platsnamn bär på en historia. Sök efter ett svenskt ortnamn och upptäck dess möjliga ursprung.</p>
+
+        <div class="search-box">
+            <input type="text" id="ortnamn" placeholder="Skriv ett ortnamn, t.ex. Hagfors">
+            <button id="sokKnapp">Sök</button>
+        </div>
+    </div>
+
+    <div id="resultat"></div>
+
+    <div class="info-box">
+        <h3>Dagens exempel</h3>
+        <p class="small-text">Testa att söka på exempelvis <b>Hagfors</b>, <b>Ekshärad</b>, <b>Höljes</b> eller <b>Stockholm</b>.</p>
+
+        <h3>Senaste sökningar</h3>
+        <div id="senaste" class="recent-buttons"></div>
+    </div>
+
+    <footer>
+        Informationen genereras med hjälp av AI och kan innehålla felaktigheter. Kontrollera gärna uppgifter mot historiska och lokala källor.
+    </footer>
+
 </div>
 
-<div id="resultat"></div>
-
 <script>
+const workerUrl = "https://ortsnamn-ai.anton-eriksson9898.workers.dev/";
 
 document.getElementById("sokKnapp").addEventListener("click", sok);
 
@@ -108,8 +177,19 @@ document.getElementById("ortnamn").addEventListener("keydown", function(event) {
     }
 });
 
-async function sok() {
+window.addEventListener("load", function() {
+    visaSenaste();
 
+    const params = new URLSearchParams(window.location.search);
+    const ort = params.get("ort");
+
+    if (ort) {
+        document.getElementById("ortnamn").value = ort;
+        sok();
+    }
+});
+
+async function sok() {
     const ort = document.getElementById("ortnamn").value.trim();
 
     if (!ort) {
@@ -122,19 +202,13 @@ async function sok() {
         '<p class="loading">Söker information...</p>';
 
     try {
-
-        const response = await fetch(
-            "https://ortsnamn-ai.anton-eriksson9898.workers.dev/",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    ortnamn: ort
-                })
-            }
-        );
+        const response = await fetch(workerUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ ortnamn: ort })
+        });
 
         const data = await response.json();
 
@@ -144,43 +218,85 @@ async function sok() {
             return;
         }
 
-        document.getElementById("resultat").innerHTML = `
-            <div class="card">
-
-                <h2>${data.ortnamn || ort}</h2>
-
-                <div class="section">
-                    <h3>📖 Betydelse</h3>
-                    <p>${data.betydelse || "Ingen information."}</p>
-                </div>
-
-                <div class="section">
-                    <h3>🗣️ Språkligt ursprung</h3>
-                    <p>${data.sprakligt_ursprung || "Ingen information."}</p>
-                </div>
-
-                <div class="section">
-                    <h3>🏛️ Historisk bakgrund</h3>
-                    <p>${data.historisk_bakgrund || "Ingen information."}</p>
-                </div>
-
-                <div class="section">
-                    <h3>⚠️ Osäkerheter</h3>
-                    <p>${data.osakerhet || "Inga kända osäkerheter."}</p>
-                </div>
-
-            </div>
-        `;
+        sparaSenaste(ort);
+        uppdateraAdress(ort);
+        visaResultat(data, ort);
+        visaSenaste();
 
     } catch (error) {
-
         document.getElementById("resultat").innerHTML =
             `<p class="error">Fel: ${error.message}</p>`;
-
-        console.error(error);
     }
 }
 
+function visaResultat(data, ort) {
+    document.getElementById("resultat").innerHTML = `
+        <div class="card">
+            <h2>${data.ortnamn || ort}</h2>
+
+            <div class="section">
+                <h3>📖 Betydelse</h3>
+                <p>${data.betydelse || "Ingen information."}</p>
+            </div>
+
+            <div class="section">
+                <h3>🗣️ Språkligt ursprung</h3>
+                <p>${data.sprakligt_ursprung || "Ingen information."}</p>
+            </div>
+
+            <div class="section">
+                <h3>🏛️ Historisk bakgrund</h3>
+                <p>${data.historisk_bakgrund || "Ingen information."}</p>
+            </div>
+
+            <div class="section">
+                <h3>⚠️ Osäkerheter</h3>
+                <p>${data.osakerhet || "Inga kända osäkerheter."}</p>
+            </div>
+
+            <button class="share-btn" onclick="kopieraLank()">Kopiera länk till sökningen</button>
+        </div>
+    `;
+}
+
+function sparaSenaste(ort) {
+    let senaste = JSON.parse(localStorage.getItem("senasteOrter")) || [];
+
+    senaste = senaste.filter(item => item.toLowerCase() !== ort.toLowerCase());
+    senaste.unshift(ort);
+    senaste = senaste.slice(0, 5);
+
+    localStorage.setItem("senasteOrter", JSON.stringify(senaste));
+}
+
+function visaSenaste() {
+    const senaste = JSON.parse(localStorage.getItem("senasteOrter")) || [];
+    const box = document.getElementById("senaste");
+
+    if (senaste.length === 0) {
+        box.innerHTML = '<p class="small-text">Inga sökningar ännu.</p>';
+        return;
+    }
+
+    box.innerHTML = senaste.map(ort =>
+        `<button onclick="sokDirekt('${ort}')">${ort}</button>`
+    ).join("");
+}
+
+function sokDirekt(ort) {
+    document.getElementById("ortnamn").value = ort;
+    sok();
+}
+
+function uppdateraAdress(ort) {
+    const nyUrl = window.location.pathname + "?ort=" + encodeURIComponent(ort);
+    window.history.pushState({}, "", nyUrl);
+}
+
+function kopieraLank() {
+    navigator.clipboard.writeText(window.location.href);
+    alert("Länken är kopierad!");
+}
 </script>
 
 </body>
