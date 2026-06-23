@@ -73,7 +73,26 @@ document.getElementById("ortnamn").addEventListener("keydown", function(event) {
 });
 
 async function sok() {
-    alert("Knappen fungerar");
+    const ort = document.getElementById("ortnamn").value;
+
+    document.getElementById("resultat").innerHTML =
+        "<p>Söker information...</p>";
+
+    const response = await fetch("https://ortsnamn-ai.anton-eriksson9898.workers.dev/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ ortnamn: ort })
+    });
+
+    const data = await response.json();
+
+    document.getElementById("resultat").innerHTML = `
+        <h2>${ort}</h2>
+        <p>${data.svar}</p>
+    `;
+}
 }
 </script>
 
