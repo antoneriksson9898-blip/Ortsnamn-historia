@@ -71,19 +71,33 @@ document.getElementById("ortnamn").addEventListener("keydown", function(event) {
         sok();
     }
 });
-
 async function sok() {
     const ort = document.getElementById("ortnamn").value;
 
     document.getElementById("resultat").innerHTML =
         "<p>Söker information...</p>";
 
-    const response = await fetch("https://ortsnamn-ai.anton-eriksson9898.workers.dev/", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ ortnamn: ort })
+    try {
+        const response = await fetch("https://ortsnamn-ai.anton-eriksson9898.workers.dev/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ ortnamn: ort })
+        });
+
+        const data = await response.json();
+
+        document.getElementById("resultat").innerHTML = `
+            <h2>${ort}</h2>
+            <p>${data.svar}</p>
+        `;
+    } catch (error) {
+        document.getElementById("resultat").innerHTML =
+            "<p>Fel: " + error.message + "</p>";
+    }
+}
+
     });
 
     const data = await response.json();
