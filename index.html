@@ -70,33 +70,44 @@ button{
 
     <script>
     
-function sok(){
+async function sok() {
 
-let ort = document.getElementById("ortnamn").value.toLowerCase();
+    let ort = document.getElementById("ortnamn").value;
 
-document.getElementById("resultat").innerHTML =
-"<p>Söker information om ortnamnet...</p>";
+    document.getElementById("resultat").innerHTML =
+        "<p>Söker information om ortnamnet...</p>";
 
-let svar = "";
+    try {
 
-if(ort === "hagfors"){
-    svar = `
-    <h2>Hagfors</h2>
-    <p><b>Betydelse:</b> Hag + fors.</p>
-    <p>Namnet syftar troligen på en fors i närheten av hagmark eller inhägnad mark.</p>
-    `;
+        const response = await fetch(
+            "https://ortsnamn-ai.anton-eriksson9898.workers.dev/",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    ortnamn: ort
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        document.getElementById("resultat").innerHTML = `
+            <h2>${ort}</h2>
+            <p>${data.svar}</p>
+        `;
+
+    } catch (error) {
+
+        document.getElementById("resultat").innerHTML = `
+            <p>Kunde inte hämta information.</p>
+        `;
+
+        console.error(error);
+    }
 }
-else if(ort === "karlstad"){
-    svar = `
-    <h2>Karlstad</h2>
-    <p>Staden är uppkallad efter kung Karl IX.</p>
-    `;
-}
-else{
-    svar = `
-    <h2>${ort}</h2>
-    <p>Tyvärr finns ingen information ännu.</p>
-    `;
 }
 
 document.getElementById("resultat").innerHTML = svar;
