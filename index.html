@@ -68,17 +68,35 @@ button{
 
 <div id="resultat"></div>
 
-<script>
-function sok(){
+<function sok(){
 
-let ort = document.getElementById("ortnamn").value;
+let ort = document.getElementById("ortnamn").value.toLowerCase();
 
-document.getElementById("resultat").innerHTML = `
-<h2>${ort}</h2>
-<p>AI-funktionen är inte inkopplad ännu.</p>
-<p>Snart kommer historien bakom ortnamnet att visas här.</p>
-`;
+let svar = "";
 
+if(ort === "hagfors"){
+    svar = `
+    <h2>Hagfors</h2>
+    <p><b>Betydelse:</b> Hag + fors.</p>
+    <p>Namnet syftar troligen på en fors i närheten av hagmark eller inhägnad mark.</p>
+    `;
+}
+else if(ort === "karlstad"){
+    svar = `
+    <h2>Karlstad</h2>
+    <p>Staden är uppkallad efter kung Karl IX.</p>
+    `;
+}
+else{
+    svar = `
+    <h2>${ort}</h2>
+    <p>Tyvärr finns ingen information ännu.</p>
+    `;
+}
+
+document.getElementById("resultat").innerHTML = svar;
+
+}
 }
 </script>
 
